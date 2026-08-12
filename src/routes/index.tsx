@@ -1,158 +1,132 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
-import { BANGLADESH_PATH } from "@/components/map/bangladesh-path";
+import { useState } from "react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "A Map of Us — Stories live where they happened" },
+      { title: "Golpo — For the moments that matter." },
       {
         name: "description",
-        content:
-          "A living map of Bangladesh where people leave memories, thoughts and moments attached to the places that created them.",
-      },
-      { property: "og:title", content: "A Map of Us — Stories live where they happened" },
-      {
-        property: "og:description",
-        content:
-          "A quiet archive of human memories, attached to real places across Bangladesh. Explore the map.",
+        content: "Golpo — an anonymous geographic storytelling platform for Bangladesh.",
       },
     ],
   }),
-  component: Landing,
+  component: LandingPage,
 });
 
-function Landing() {
+function LandingPage() {
   const navigate = useNavigate();
-  const [leaving, setLeaving] = useState(false);
+  const [entering, setEntering] = useState(false);
 
-  useEffect(() => {
-    if (!leaving) return;
-    const timer = setTimeout(() => {
+  function enterApp() {
+    setEntering(true);
+    setTimeout(() => {
       void navigate({ to: "/map" });
-    }, 1900);
-    return () => clearTimeout(timer);
-  }, [leaving, navigate]);
+    }, 2800);
+  }
 
   return (
-    <main className="paper relative min-h-svh overflow-hidden bg-background">
-      {/* Cartographic silhouette: part of the composition, not decoration */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-[-12%] hidden w-[62%] items-center justify-center md:flex"
-      >
-        <BangladeshOutline className="h-[78%] w-auto opacity-[0.5]" />
-      </div>
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-[-6%] flex justify-center md:hidden"
-      >
-        <BangladeshOutline className="h-[52svh] w-auto opacity-[0.35]" />
+    <main className="relative flex min-h-svh w-full flex-col justify-between overflow-hidden bg-[#F6F5F2] text-[#1E1E1E] select-none">
+      {/* Responsive Background Artwork */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden z-0">
+        {/* Mobile Background Image (< 768px) */}
+        <img
+          src="/mobile.png"
+          alt=""
+          className="block md:hidden h-full w-full object-cover object-center"
+        />
+
+        {/* Desktop Background Image (>= 768px) */}
+        <img
+          src="/desktop.png"
+          alt=""
+          className="hidden md:block h-full w-full object-cover object-center"
+        />
+
+        {/* Subtle Ambient Vignette & Contrast Overlay */}
+        <div className="absolute inset-0 bg-[#F6F5F2]/15" />
       </div>
 
-      <AnimatePresence>
-        {!leaving ? (
-          <motion.div
-            key="intro"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, filter: "blur(2px)" }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="relative z-10 flex min-h-svh flex-col px-6 py-10 sm:px-10 md:px-16 lg:px-24"
-          >
-            <header className="flex items-center justify-between">
-              <p className="label-xs">Bangladesh · 2026</p>
-              <p className="label-xs">An archive of places</p>
-            </header>
-
-            <div className="flex flex-1 flex-col justify-center py-16 md:max-w-[34rem]">
-              <h1 className="font-serif text-[2.5rem] leading-[1.1] tracking-[-0.02em] text-foreground sm:text-[3.25rem] md:text-[3.75rem]">
-                A Map
-                <br />
-                of Us
+      {/* Center Hero — flex-1 ensures centering regardless of footer height */}
+      <div className="relative z-20 flex flex-1 items-center justify-center">
+        <AnimatePresence mode="wait">
+          {!entering ? (
+            <motion.div
+              key="hero-content"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col items-center px-6 text-center"
+            >
+              {/* Main Tracked Serif Title */}
+              <h1 className="font-serif text-[1.875rem] font-bold tracking-[0.34em] text-[#16223B] sm:text-[2.25rem] md:text-[2.6rem] drop-shadow-xs">
+                G O L P O
               </h1>
-              <p className="mt-8 max-w-sm font-serif text-lg leading-[1.75] text-muted-foreground sm:text-xl">
-                Stories live where they happened.
+
+              {/* Subtitle */}
+              <p className="font-serif mt-3 text-sm text-[#3A3A3C] sm:text-base">
+                For the moments that matter.
               </p>
 
-              <div className="mt-14">
+              {/* Enter Button */}
+              <div className="mt-8 sm:mt-10">
                 <button
                   type="button"
-                  onClick={() => setLeaving(true)}
-                  className="group inline-flex items-center gap-4 border-b border-foreground/25 pb-2 text-[0.8125rem] tracking-[0.1em] text-foreground uppercase transition-colors hover:border-foreground"
+                  onClick={enterApp}
+                  className="group relative inline-flex items-center justify-center rounded-full border border-black/15 bg-white/95 px-8 py-2.5 text-[0.8125rem] font-medium tracking-[0.14em] text-[#1E1E1E] uppercase shadow-md backdrop-blur-xs transition-all duration-200 hover:bg-white hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 >
-                  Explore the Map
-                  <span
-                    aria-hidden
-                    className="inline-block transition-transform duration-500 group-hover:translate-x-1"
-                  >
-                    →
-                  </span>
+                  ENTER GOLPO
                 </button>
               </div>
-            </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="entering-veil"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-col items-center text-center px-6 max-w-lg"
+            >
+              <span className="font-serif text-[11px] font-bold tracking-[0.32em] text-[#8E8E93] uppercase mb-3">
+                G O L P O
+              </span>
 
-            <footer className="rule pt-5">
-              <p className="max-w-md text-xs leading-relaxed text-subtle">
-                Every memory is anonymous. Only the place is known.
+              <p className="font-serif italic text-base sm:text-xl text-[#16223B] leading-relaxed">
+                "Every place holds a memory someone left behind."
               </p>
-            </footer>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="threshold"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
-            className="relative z-10 grid min-h-svh place-items-center px-6 text-center"
-          >
-            <div>
-              <motion.p
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.35, duration: 1 }}
-                className="font-serif text-xl leading-relaxed text-foreground/80 sm:text-2xl"
-              >
-                Somewhere, someone left something behind.
-              </motion.p>
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.1, duration: 0.9 }}
-                className="label-xs mt-8"
-              >
-                Resolving the map
-              </motion.p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </main>
-  );
-}
 
-/** The national silhouette, drawn as a thin cartographic line over a faint graticule. */
-export function BangladeshOutline({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 300 400" className={className} aria-hidden focusable="false">
-      <g stroke="var(--map-line)" strokeWidth="0.5" strokeDasharray="1 7">
-        {[40, 90, 140, 190, 240, 290, 340].map((y) => (
-          <line key={y} x1="0" y1={y} x2="300" y2={y} />
-        ))}
-        {[20, 70, 120, 170, 220, 270].map((x) => (
-          <line key={x} x1={x} y1="0" x2={x} y2="400" />
-        ))}
-      </g>
-      <path
-        d={BANGLADESH_PATH}
-        fill="var(--map-bg)"
-        fillOpacity="0.9"
-        stroke="var(--map-line-deep)"
-        strokeWidth="0.9"
-        strokeLinejoin="round"
-      />
-    </svg>
+              <p className="mt-3 font-serif text-xs text-[#71717A] max-w-sm leading-relaxed">
+                Opening the living map of Bangladesh...
+              </p>
+
+              {/* Subtle animated breathing progress indicator */}
+              <div className="mt-6 flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#16223B] animate-ping" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#16223B]/60" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#16223B]/30" />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Bottom Left Author Credit */}
+      <footer className="relative z-20 p-5 sm:p-6 md:p-8 flex justify-start items-end">
+        <p className="font-sans text-[11px] text-gray-500 font-normal tracking-normal">
+          Made by{" "}
+          <a
+            href="https://www.aajubair.me/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-gray-700 underline underline-offset-2 hover:text-black transition-colors"
+          >
+            aajp
+          </a>
+        </p>
+      </footer>
+    </main>
   );
 }

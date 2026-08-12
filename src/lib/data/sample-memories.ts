@@ -1,8 +1,8 @@
 import type { Memory } from "../types";
 
 /**
- * Fictional seed memories, distributed across Bangladesh.
- * These stand in for the `memories` table until the database is connected.
+ * Seed memories across Bangladesh with relatable human theme icons.
+ * Dates all set to 13 August 2026.
  */
 export const SAMPLE_MEMORIES: Memory[] = [
   {
@@ -16,9 +16,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 90.376,
     location_name: "Dhanmondi Lake, Dhaka",
     visibility: "public",
+    icon: "love",
     status: "published",
-    created_at: "2026-08-12T18:20:00Z",
-    updated_at: "2026-08-12T18:20:00Z",
+    created_at: "2026-08-13T18:20:00Z",
+    updated_at: "2026-08-13T18:20:00Z",
   },
   {
     id: "m-02",
@@ -31,9 +32,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 90.3535,
     location_name: "Barishal Launch Terminal",
     visibility: "public",
+    icon: "family",
     status: "published",
-    created_at: "2026-07-24T09:05:00Z",
-    updated_at: "2026-07-24T09:05:00Z",
+    created_at: "2026-08-13T17:45:00Z",
+    updated_at: "2026-08-13T17:45:00Z",
   },
   {
     id: "m-03",
@@ -46,9 +48,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 90.4074,
     location_name: "শাঁখারী বাজার, পুরান ঢাকা",
     visibility: "public",
+    icon: "nostalgia",
     status: "published",
-    created_at: "2026-06-11T16:40:00Z",
-    updated_at: "2026-06-11T16:40:00Z",
+    created_at: "2026-08-13T16:30:00Z",
+    updated_at: "2026-08-13T16:30:00Z",
     lang: "bn",
   },
   {
@@ -62,9 +65,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 91.8687,
     location_name: "Zindabazar, Sylhet",
     visibility: "public",
+    icon: "grief",
     status: "published",
-    created_at: "2026-05-02T11:10:00Z",
-    updated_at: "2026-05-02T11:10:00Z",
+    created_at: "2026-08-13T15:15:00Z",
+    updated_at: "2026-08-13T15:15:00Z",
   },
   {
     id: "m-05",
@@ -77,9 +81,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 90.4078,
     location_name: "Gulshan 1, Dhaka",
     visibility: "public",
+    icon: "growth",
     status: "published",
-    created_at: "2026-04-18T04:30:00Z",
-    updated_at: "2026-04-18T04:30:00Z",
+    created_at: "2026-08-13T14:50:00Z",
+    updated_at: "2026-08-13T14:50:00Z",
   },
   {
     id: "m-06",
@@ -92,9 +97,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 92.0058,
     location_name: "Laboni Beach, Cox's Bazar",
     visibility: "public",
+    icon: "family",
     status: "published",
-    created_at: "2026-03-27T13:00:00Z",
-    updated_at: "2026-03-27T13:00:00Z",
+    created_at: "2026-08-13T13:40:00Z",
+    updated_at: "2026-08-13T13:40:00Z",
   },
   {
     id: "m-07",
@@ -107,9 +113,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 88.6042,
     location_name: "Rajshahi Railway Station",
     visibility: "public",
+    icon: "journey",
     status: "published",
-    created_at: "2026-02-14T19:45:00Z",
-    updated_at: "2026-02-14T19:45:00Z",
+    created_at: "2026-08-13T12:35:00Z",
+    updated_at: "2026-08-13T12:35:00Z",
   },
   {
     id: "m-08",
@@ -122,9 +129,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 90.4203,
     location_name: "ব্রহ্মপুত্র পাড়, ময়মনসিংহ",
     visibility: "public",
+    icon: "family",
     status: "published",
-    created_at: "2026-01-30T15:20:00Z",
-    updated_at: "2026-01-30T15:20:00Z",
+    created_at: "2026-08-13T11:20:00Z",
+    updated_at: "2026-08-13T11:20:00Z",
     lang: "bn",
   },
   {
@@ -138,9 +146,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 89.5403,
     location_name: "Rupsha River, Khulna",
     visibility: "public",
+    icon: "solitude",
     status: "published",
-    created_at: "2025-12-21T07:15:00Z",
-    updated_at: "2025-12-21T07:15:00Z",
+    created_at: "2026-08-13T10:15:00Z",
+    updated_at: "2026-08-13T10:15:00Z",
   },
   {
     id: "m-10",
@@ -153,9 +162,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 91.7296,
     location_name: "Srimangal, Moulvibazar",
     visibility: "public",
+    icon: "nostalgia",
     status: "published",
-    created_at: "2025-11-09T10:50:00Z",
-    updated_at: "2025-11-09T10:50:00Z",
+    created_at: "2026-08-13T09:30:00Z",
+    updated_at: "2026-08-13T09:30:00Z",
   },
   {
     id: "m-11",
@@ -168,9 +178,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 90.3795,
     location_name: "Sector 7, Uttara, Dhaka",
     visibility: "public",
+    icon: "solitude",
     status: "published",
-    created_at: "2025-10-16T21:05:00Z",
-    updated_at: "2025-10-16T21:05:00Z",
+    created_at: "2026-08-13T08:25:00Z",
+    updated_at: "2026-08-13T08:25:00Z",
   },
   {
     id: "m-12",
@@ -183,9 +194,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 91.7832,
     location_name: "Anderkilla, Chattogram",
     visibility: "public",
+    icon: "friendship",
     status: "published",
-    created_at: "2025-09-05T12:35:00Z",
-    updated_at: "2025-09-05T12:35:00Z",
+    created_at: "2026-08-13T07:10:00Z",
+    updated_at: "2026-08-13T07:10:00Z",
   },
   {
     id: "m-13",
@@ -198,9 +210,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 89.2752,
     location_name: "Rangpur",
     visibility: "public",
+    icon: "nostalgia",
     status: "published",
-    created_at: "2025-08-22T14:10:00Z",
-    updated_at: "2025-08-22T14:10:00Z",
+    created_at: "2026-08-13T06:05:00Z",
+    updated_at: "2026-08-13T06:05:00Z",
   },
   {
     id: "m-14",
@@ -213,9 +226,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 90.5,
     location_name: "Narayanganj",
     visibility: "public",
+    icon: "love",
     status: "published",
-    created_at: "2025-07-19T17:25:00Z",
-    updated_at: "2025-07-19T17:25:00Z",
+    created_at: "2026-08-13T05:00:00Z",
+    updated_at: "2026-08-13T05:00:00Z",
   },
   {
     id: "m-15",
@@ -228,9 +242,10 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 91.1809,
     location_name: "Cumilla",
     visibility: "public",
+    icon: "nostalgia",
     status: "published",
-    created_at: "2025-06-30T08:40:00Z",
-    updated_at: "2025-06-30T08:40:00Z",
+    created_at: "2026-08-13T04:15:00Z",
+    updated_at: "2026-08-13T04:15:00Z",
   },
   {
     id: "m-16",
@@ -243,8 +258,9 @@ export const SAMPLE_MEMORIES: Memory[] = [
     longitude: 90.1195,
     location_name: "Kuakata, Patuakhali",
     visibility: "public",
+    icon: "solitude",
     status: "published",
-    created_at: "2025-05-11T05:55:00Z",
-    updated_at: "2025-05-11T05:55:00Z",
+    created_at: "2026-08-13T03:30:00Z",
+    updated_at: "2026-08-13T03:30:00Z",
   },
 ];

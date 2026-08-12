@@ -10,15 +10,22 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AajpRouteImport } from './routes/aajp'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as LeaveRouteImport } from './routes/leave'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as MemoriesRouteImport } from './routes/memories'
+import { Route as ModerationRouteImport } from './routes/moderation'
 import { Route as ProfileRouteImport } from './routes/profile'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AajpRoute = AajpRouteImport.update({
+  id: '/aajp',
+  path: '/aajp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -41,6 +48,11 @@ const MemoriesRoute = MemoriesRouteImport.update({
   path: '/memories',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ModerationRoute = ModerationRouteImport.update({
+  id: '/moderation',
+  path: '/moderation',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -49,43 +61,76 @@ const ProfileRoute = ProfileRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aajp': typeof AajpRoute
   '/auth': typeof AuthRoute
   '/leave': typeof LeaveRoute
   '/map': typeof MapRoute
   '/memories': typeof MemoriesRoute
+  '/moderation': typeof ModerationRoute
   '/profile': typeof ProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aajp': typeof AajpRoute
   '/auth': typeof AuthRoute
   '/leave': typeof LeaveRoute
   '/map': typeof MapRoute
   '/memories': typeof MemoriesRoute
+  '/moderation': typeof ModerationRoute
   '/profile': typeof ProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/aajp': typeof AajpRoute
   '/auth': typeof AuthRoute
   '/leave': typeof LeaveRoute
   '/map': typeof MapRoute
   '/memories': typeof MemoriesRoute
+  '/moderation': typeof ModerationRoute
   '/profile': typeof ProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/leave' | '/map' | '/memories' | '/profile'
+  fullPaths:
+    | '/'
+    | '/aajp'
+    | '/auth'
+    | '/leave'
+    | '/map'
+    | '/memories'
+    | '/moderation'
+    | '/profile'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/leave' | '/map' | '/memories' | '/profile'
-  id: '__root__' | '/' | '/auth' | '/leave' | '/map' | '/memories' | '/profile'
+  to:
+    | '/'
+    | '/aajp'
+    | '/auth'
+    | '/leave'
+    | '/map'
+    | '/memories'
+    | '/moderation'
+    | '/profile'
+  id:
+    | '__root__'
+    | '/'
+    | '/aajp'
+    | '/auth'
+    | '/leave'
+    | '/map'
+    | '/memories'
+    | '/moderation'
+    | '/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AajpRoute: typeof AajpRoute
   AuthRoute: typeof AuthRoute
   LeaveRoute: typeof LeaveRoute
   MapRoute: typeof MapRoute
   MemoriesRoute: typeof MemoriesRoute
+  ModerationRoute: typeof ModerationRoute
   ProfileRoute: typeof ProfileRoute
 }
 
@@ -96,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aajp': {
+      id: '/aajp'
+      path: '/aajp'
+      fullPath: '/aajp'
+      preLoaderRoute: typeof AajpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -126,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MemoriesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/moderation': {
+      id: '/moderation'
+      path: '/moderation'
+      fullPath: '/moderation'
+      preLoaderRoute: typeof ModerationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -138,10 +197,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AajpRoute: AajpRoute,
   AuthRoute: AuthRoute,
   LeaveRoute: LeaveRoute,
   MapRoute: MapRoute,
   MemoriesRoute: MemoriesRoute,
+  ModerationRoute: ModerationRoute,
   ProfileRoute: ProfileRoute,
 }
 export const routeTree = rootRouteImport

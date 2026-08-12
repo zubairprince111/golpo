@@ -1,11 +1,12 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  ArrowLeft,
-  Check,
+  X,
   Search,
   MapPin,
-  LogIn,
+  Check,
+  AlertCircle,
   PenLine,
   Navigation,
   Loader2,
@@ -13,36 +14,27 @@ import {
   Globe,
   Lock,
   ShieldAlert,
-  ShieldCheck,
   Feather,
 } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
-import { BottomNavigation } from "@/components/navigation/BottomNavigation";
 import { searchPlaces, reverseGeocodeLiveLocation, isWithinBangladesh } from "@/lib/data/places";
 import { TermsPolicyModal } from "@/components/modals/TermsPolicyModal";
 import { useAppState } from "@/lib/store";
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import type { Place, Visibility, StoryIconType } from "@/lib/types";
 import { STORY_THEMES } from "@/lib/data/icons";
 import { cn } from "@/lib/utils";
-import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton";
 import { FullMapLocationPickerModal } from "@/components/map/FullMapLocationPickerModal";
 
-export const Route = createFileRoute("/leave")({
-  head: () => ({
-    meta: [
-      { title: "Leave a Memory — Golpo" },
-      {
-        name: "description",
-        content: "Attach a memory to the place where it happened in Bangladesh on Golpo.",
-      },
-    ],
-  }),
-  component: LeaveMemoryPage,
-});
-
-function LeaveMemoryPage() {
-  const { user, profile, addMemory, hydrated } = useAppState();
-  const navigate = useNavigate();
+export function SubmitMemoryModal({
+  isOpen,
+  onClose,
+  onSuccess,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: (memoryId: string, lat: number, lng: number) => void;
+}) {
+  const { user, profile, addMemory } = useAppState();
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [query, setQuery] = useState("");
@@ -53,9 +45,9 @@ function LeaveMemoryPage() {
   const [selectedIcon, setSelectedIcon] = useState<StoryIconType>("family");
   const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
   const [visibility, setVisibility] = useState<Visibility>("public");
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [showFullMapPicker, setShowFullMapPicker] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const results = place ? [] : searchPlaces(query);
@@ -90,7 +82,7 @@ function LeaveMemoryPage() {
         if (!isWithinBangladesh(latitude, longitude)) {
           setDetectingLocation(false);
           setLocationError(
-            "📍 Location is outside Bangladesh or in international waters. Golpo is dedicated exclusively to Bangladesh. Please select a location within Bangladesh.",
+            "📍 Location is outside Bangladesh or in international waters. A Map of Us is dedicated exclusively to Bangladesh. Please select a location within Bangladesh.",
           );
           return;
         }
@@ -126,21 +118,21 @@ function LeaveMemoryPage() {
     );
   }
 
-  async function submit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (!user) {
+      setShowAuthPrompt(true);
       return;
     }
 
-    if (!place || !content.trim()) return;
+    if (!content.trim() || !place) return;
 
     if (!isWithinBangladesh(place.latitude, place.longitude)) {
       setLocationError("Location must be within Bangladesh boundaries.");
       return;
     }
 
-    setSubmitting(true);
     const memory = await addMemory({
       content,
       title: title.trim() || undefined,
@@ -150,91 +142,115 @@ function LeaveMemoryPage() {
       visibility,
       icon: selectedIcon,
     });
-    setSubmitting(false);
 
     if (memory) {
-      void navigate({ to: "/map", search: { story: memory.id } });
+      onSuccess(memory.id, memory.latitude, memory.longitude);
+      onClose();
+      setContent("");
+      setTitle("");
+      setPlace(null);
+      setIsLiveLocation(false);
+      setQuery("");
     }
   }
 
-  return (
-    <main className="min-h-svh bg-[#F6F5F2] pb-28 select-text">
-      <div className="mx-auto w-full max-w-[32rem] px-4 pt-6 sm:px-6">
-        {/* Navigation Back */}
-        <Link
-          to="/map"
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-[#71717A] hover:text-[#1D1D1F] transition-colors"
+  if (!isOpen || typeof document === "undefined") return null;
+
+  return createPortal(
+    <AnimatePresence>
+      <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6 select-text overflow-y-auto">
+        {/* Backdrop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+        />
+
+        {/* Modal Window */}
+        <motion.div
+          initial={{ scale: 0.96, opacity: 0, y: 8 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.96, opacity: 0, y: 8 }}
+          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-[#E2E0D8]"
         >
-          <ArrowLeft className="h-4 w-4" />
-          <span>Back to Map</span>
-        </Link>
-
-        {/* ── Separate Screen: Not logged in ──────────────────── */}
-        {!hydrated ? null : !user ? (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-6 rounded-3xl border border-[#E2E0D8] bg-[#FAF9F6] p-7 sm:p-9 text-center shadow-lg shadow-black/[0.03]"
+          {/* Close Button */}
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="absolute top-5 right-5 text-[#8E8E93] hover:text-[#1D1D1F] p-1.5 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
           >
-            {/* Masthead Feather Badge */}
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#EFECE6] text-[#16223B] mb-5 border border-[#E2E0D8] shadow-2xs">
-              <Feather className="h-6 w-6 text-[#16223B]" strokeWidth={1.5} />
-            </div>
+            <X className="h-4 w-4" />
+          </button>
 
-            {/* Quiet Category Tag */}
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-[#E2E0D8] px-3.5 py-1 text-[11px] font-medium tracking-wider uppercase text-[#71717A] mb-3.5 shadow-2xs">
-              <Lock className="h-3 w-3 text-[#16223B]" strokeWidth={1.75} />
-              <span>Quiet Sanctuary</span>
-            </span>
-
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#16223B] tracking-tight leading-snug">
-              We understand you have so much to say
-            </h1>
-
-            <p className="mt-3 text-xs sm:text-[13.5px] text-[#5C5C60] leading-relaxed max-w-md mx-auto">
-              Every whispered memory, confession, and silent moment belongs on this map. To keep your words safe and protect this shared space from automated bots and spam, we kindly ask you to sign in before leaving a note.
-            </p>
-
-            {/* Full Anonymity Guarantee Callout */}
-            <div className="mt-6 rounded-2xl bg-white border border-[#E2E0D8] p-4 text-xs sm:text-[12.5px] text-[#4A4A4F] max-w-md mx-auto text-left shadow-2xs">
-              <div className="flex items-center gap-2 mb-1.5 text-gray-900 font-semibold text-xs">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#EFECE6] text-[11px]">🔒</span>
-                <span>Uncompromised Anonymity</span>
+          {/* ── Separate Screen: Not logged in ──────────────────── */}
+          {!user ? (
+            <div className="text-center py-2 px-1">
+              {/* Masthead Feather Badge */}
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#EFECE6] text-[#16223B] mb-4 border border-[#E2E0D8] shadow-2xs">
+                <Feather className="h-6 w-6 text-[#16223B]" strokeWidth={1.5} />
               </div>
-              <p className="leading-relaxed text-[#71717A] pl-7">
-                <strong className="text-gray-900">Don't worry:</strong> Your Google email, account details, and private profile are never recorded publicly or shared. On the map, you will always remain a quiet stranger: <span className="font-semibold text-gray-900 font-mono text-[11px] bg-gray-100 px-1.5 py-0.5 rounded border border-gray-200">GOLPO-XXXXX</span>.
+
+              {/* Quiet Category Tag */}
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white border border-[#E2E0D8] px-3.5 py-1 text-[11px] font-medium tracking-wider uppercase text-[#71717A] mb-3 shadow-2xs">
+                <Lock className="h-3 w-3 text-[#16223B]" strokeWidth={1.75} />
+                <span>Quiet Sanctuary</span>
+              </span>
+
+              <h2 className="font-serif text-2xl font-bold text-[#16223B] tracking-tight leading-snug">
+                We understand you have so much to say
+              </h2>
+
+              <p className="mt-2.5 text-xs sm:text-[13px] text-[#5C5C60] leading-relaxed max-w-md mx-auto">
+                Every whispered memory, confession, and silent moment belongs on this map. To keep your words safe and protect this shared space from automated bots and spam, we kindly ask you to sign in before leaving a note.
               </p>
-            </div>
 
-            {/* Google Sign-in Action */}
-            <div className="mt-6 max-w-xs mx-auto">
-              <GoogleSignInButton redirectTo="/leave" label="Sign in with Google" />
-            </div>
+              {/* Full Anonymity Guarantee Callout */}
+              <div className="mt-5 rounded-2xl bg-[#FAF9F6] border border-[#E2E0D8] p-4 text-xs sm:text-[12px] text-[#4A4A4F] max-w-md mx-auto text-left shadow-2xs">
+                <div className="flex items-center gap-2 mb-1.5 text-gray-900 font-semibold text-xs">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#EFECE6] text-[11px]">🔒</span>
+                  <span>Uncompromised Anonymity</span>
+                </div>
+                <p className="leading-relaxed text-[#71717A] pl-7">
+                  <strong className="text-gray-900">Don't worry:</strong> Your Google email, account details, and private profile are never recorded publicly or shared. On the map, you will always remain a quiet stranger: <span className="font-semibold text-gray-900 font-mono text-[11px] bg-white px-1.5 py-0.5 rounded border border-gray-200">GOLPO-XXXXX</span>.
+                </p>
+              </div>
 
-            <div className="mt-5 pt-4 border-t border-black/5">
-              <Link to="/map" className="inline-flex items-center gap-1 text-xs text-[#71717A] hover:text-[#16223B] transition-colors">
-                <span>← Return to explore the map first</span>
-              </Link>
-            </div>
-          </motion.div>
-        ) : (
-          /* ── Clean Submission Form: When Logged In ─────────── */
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="mt-4 rounded-2xl border border-[#E2E0D8] bg-white p-5 sm:p-7 shadow-sm"
-          >
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#16223B]">
-              What did this place hold for you?
-            </h1>
-            <p className="mt-1 text-xs text-[#71717A] leading-relaxed">
-              A memory, a confession, or words left unsaid — anchored to this place in Bangladesh.
-            </p>
+              {/* Google Sign-in Action */}
+              <div className="mt-6 max-w-xs mx-auto">
+                <GoogleSignInButton redirectTo="/map" label="Sign in with Google" />
+              </div>
 
-            {/* Form */}
-            <form onSubmit={submit} className="mt-5 space-y-4 sm:space-y-5">
+              <div className="mt-4 pt-3 border-t border-black/5">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="text-xs text-[#71717A] hover:text-[#16223B] transition-colors cursor-pointer"
+                >
+                  ← Cancel and return to map
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* ── Clean Submission Form: When Logged In ─────────── */
+            <>
+              {/* Header */}
+              <div className="flex items-start justify-between pb-3.5 border-b border-gray-100 pr-6">
+                <div>
+                  <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#16223B]">
+                    What did this place hold for you?
+                  </h2>
+                  <p className="mt-1 text-xs text-[#71717A] leading-relaxed">
+                    A memory, a confession, or words left unsaid — anchored to this place.
+                  </p>
+                </div>
+              </div>
+
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="mt-4 space-y-4">
             {/* 1. The Memory */}
             <div>
               <div className="flex justify-between items-baseline mb-1.5">
@@ -244,13 +260,13 @@ function LeaveMemoryPage() {
               <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                rows={5}
+                rows={4}
                 placeholder="Write what you felt, what was spoken, or what was left behind..."
-                className="w-full rounded-xl border border-[#E2E0D8] bg-[#FAF9F6] p-3 text-xs sm:text-sm leading-relaxed text-[#1D1D1F] placeholder:text-[#8E8E93] focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black shadow-xs resize-y"
+                className="w-full rounded-xl border border-[#E2E0D8] bg-[#FAF9F6] p-3 text-xs sm:text-sm leading-relaxed text-[#1D1D1F] placeholder:text-[#8E8E93] focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black shadow-xs resize-y min-h-[96px]"
               />
             </div>
 
-            {/* 2. Quiet Title */}
+            {/* 2. Quiet Title or Opening Line */}
             <div>
               <label className="block text-xs font-medium text-[#1E1E1E] mb-1">
                 A quiet title or first line <span className="text-[10px] text-[#8E8E93] font-normal">(optional)</span>
@@ -268,6 +284,7 @@ function LeaveMemoryPage() {
               <div className="flex items-center justify-between mb-1">
                 <label className="text-xs font-medium text-[#1E1E1E]">Where does this belong?</label>
 
+                {/* Pick on Map */}
                 <button
                   type="button"
                   onClick={() => setShowFullMapPicker(true)}
@@ -330,11 +347,12 @@ function LeaveMemoryPage() {
                       <input
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search a street, district, or landmark in Bangladesh..."
+                        placeholder="Search a street, district, landmark, or village in Bangladesh..."
                         className="w-full bg-transparent text-xs sm:text-sm text-[#1D1D1F] placeholder:text-[#8E8E93] focus:outline-none"
                       />
                     </div>
 
+                    {/* Dropdown search results */}
                     {results.length > 0 ? (
                       <ul className="absolute top-full left-0 right-0 z-50 mt-1 max-h-40 overflow-y-auto rounded-xl border border-[#E2E0D8] bg-white py-1 shadow-lg">
                         {results.map((opt) => (
@@ -361,6 +379,7 @@ function LeaveMemoryPage() {
 
             {/* 4 & 5: The Feeling & Who Can Find This */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              {/* Left: The Feeling */}
               <div className="relative" ref={dropdownRef}>
                 <label className="block text-xs font-medium text-[#1E1E1E] mb-1">
                   The Feeling
@@ -382,6 +401,7 @@ function LeaveMemoryPage() {
                   />
                 </button>
 
+                {/* List Dropdown Menu */}
                 <AnimatePresence>
                   {themeDropdownOpen && (
                     <motion.div
@@ -424,6 +444,7 @@ function LeaveMemoryPage() {
                 </AnimatePresence>
               </div>
 
+              {/* Right: Who Can Find This */}
               <div>
                 <label className="block text-xs font-medium text-[#1E1E1E] mb-1">
                   Who can find this?
@@ -460,6 +481,19 @@ function LeaveMemoryPage() {
               </div>
             </div>
 
+            {/* Inline Auth Prompt if triggered */}
+            {showAuthPrompt && !user ? (
+              <div className="rounded-2xl border border-amber-200/90 bg-amber-50/80 p-4 text-center">
+                <p className="font-serif text-sm font-bold text-[#16223B]">Sign in to anchor your memory</p>
+                <p className="mt-1 text-xs text-[#5C5C60] leading-relaxed">
+                  We understand you have so much to say. To keep memories safe and prevent bots, please sign in with Google. Your details remain 100% anonymous.
+                </p>
+                <div className="mt-3 max-w-xs mx-auto">
+                  <GoogleSignInButton redirectTo="/map" label="Sign in with Google" />
+                </div>
+              </div>
+            ) : null}
+
             {/* Community Safety & Anti-Bullying Pledge */}
             <div className="rounded-xl bg-gray-50 border border-gray-200/80 p-2.5 text-[11px] text-[#5C5C60] flex items-start gap-2">
               <ShieldAlert className="h-3.5 w-3.5 text-rose-600 shrink-0 mt-0.5" />
@@ -480,7 +514,7 @@ function LeaveMemoryPage() {
               <button
                 type="submit"
                 disabled={!place || !content.trim()}
-                className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-2.5 text-xs font-medium text-white shadow-sm hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-2.5 text-xs font-medium text-white shadow-sm hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
               >
                 <PenLine className="h-3.5 w-3.5" />
                 <span>Anchor to Map</span>
@@ -493,33 +527,33 @@ function LeaveMemoryPage() {
               </div>
             </div>
           </form>
-        </motion.div>
-        )}
-      </div>
+        </>
+      )}
+    </motion.div>
+  </div>
 
-      {/* Full Screen Map Location Picker Modal */}
-      <FullMapLocationPickerModal
-        isOpen={showFullMapPicker}
-        onClose={() => setShowFullMapPicker(false)}
-        initialLatitude={place?.latitude ?? 23.75}
-        initialLongitude={place?.longitude ?? 90.38}
-        initialPlaceName={place?.name ?? "Dhaka, Bangladesh"}
-        onConfirm={(loc) => {
-          setPlace(loc);
-          setIsLiveLocation(false);
-          setQuery("");
-        }}
-      />
+    {/* Full Screen Map Location Picker Modal */}
+    <FullMapLocationPickerModal
+      isOpen={showFullMapPicker}
+      onClose={() => setShowFullMapPicker(false)}
+      initialLatitude={place?.latitude ?? 23.75}
+      initialLongitude={place?.longitude ?? 90.38}
+      initialPlaceName={place?.name ?? "Dhaka, Bangladesh"}
+      onConfirm={(loc) => {
+        setPlace(loc);
+        setIsLiveLocation(false);
+        setQuery("");
+      }}
+    />
 
-
-      {/* Safety Policy & Terms Modal */}
-      <TermsPolicyModal
-        isOpen={showTerms}
-        onClose={() => setShowTerms(false)}
-      />
-
-      <BottomNavigation />
-    </main>
+    {/* Safety Policy & Terms Modal */}
+    <TermsPolicyModal
+      isOpen={showTerms}
+      onClose={() => setShowTerms(false)}
+    />
+  </AnimatePresence>,
+  document.body
   );
 }
+
 

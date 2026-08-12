@@ -1,63 +1,81 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Map as MapIcon, Plus, BookMarked, User } from "lucide-react";
+import { Map, Plus, BookOpen, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const items = [
-  { to: "/map", label: "Map", icon: MapIcon },
-  { to: "/memories", label: "Memories", icon: BookMarked },
-  { to: "/profile", label: "Profile", icon: User },
-] as const;
-
-export function BottomNavigation() {
+export function BottomNavigation({
+  onCreate,
+}: {
+  onCreate?: () => void;
+}) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
     <nav
-      aria-label="Primary"
-      className="pointer-events-none absolute inset-x-0 bottom-0 z-[600] flex justify-center md:justify-start"
-      style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1rem)" }}
+      aria-label="Primary navigation"
+      className="pointer-events-none fixed inset-x-0 bottom-4 z-[600] flex justify-center pb-[env(safe-area-inset-bottom)]"
     >
-      <div className="pointer-events-auto mx-4 flex items-center gap-1 border border-border bg-surface/92 px-2 py-1.5 shadow-float backdrop-blur-[3px] md:mx-6">
-        <NavItem {...items[0]} active={pathname === "/map"} />
-        <span className="mx-1 h-6 w-px bg-border" aria-hidden />
+      <div className="pointer-events-auto flex items-center gap-6 sm:gap-8 rounded-full amou-glass-pill px-5 py-2 shadow-md">
+        {/* 1. Map */}
         <Link
-          to="/leave"
-          aria-label="Leave something here"
-          className="mx-0.5 grid h-9 w-9 place-items-center bg-foreground text-primary-foreground transition-colors hover:bg-foreground/85"
+          to="/map"
+          title="Public Map"
+          aria-label="Public Map"
+          className={cn(
+            "p-1.5 text-[#48484A] transition-transform hover:scale-110 hover:text-[#1D1D1F]",
+            pathname === "/map" && "text-[#1D1D1F] scale-105 font-bold",
+          )}
         >
-          <Plus className="h-4 w-4" strokeWidth={1.5} aria-hidden />
+          <Map className="h-5 w-5" strokeWidth={1.75} />
         </Link>
-        <span className="mx-1 h-6 w-px bg-border" aria-hidden />
-        <NavItem {...items[1]} active={pathname.startsWith("/memories")} />
-        <NavItem {...items[2]} active={pathname.startsWith("/profile")} />
+
+        {/* 2. Leave / Create Memory (+) - Prominent Circular Pop Button */}
+        {onCreate ? (
+          <button
+            type="button"
+            onClick={onCreate}
+            title="Leave a memory"
+            aria-label="Leave a memory"
+            className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-[#1D1D1F] text-white shadow-md transition-all hover:scale-110 hover:bg-black hover:shadow-lg active:scale-95"
+          >
+            <Plus className="h-5 w-5" strokeWidth={2.5} />
+          </button>
+        ) : (
+          <Link
+            to="/leave"
+            title="Leave a memory"
+            aria-label="Leave a memory"
+            className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-[#1D1D1F] text-white shadow-md transition-all hover:scale-110 hover:bg-black hover:shadow-lg active:scale-95"
+          >
+            <Plus className="h-5 w-5" strokeWidth={2.5} />
+          </Link>
+        )}
+
+        {/* 3. Diary (Personal Archive) */}
+        <Link
+          to="/memories"
+          title="Diary"
+          aria-label="Diary"
+          className={cn(
+            "p-1.5 text-[#48484A] transition-transform hover:scale-110 hover:text-[#1D1D1F]",
+            pathname.startsWith("/memories") && "text-[#1D1D1F] scale-105",
+          )}
+        >
+          <BookOpen className="h-5 w-5" strokeWidth={1.75} />
+        </Link>
+
+        {/* 4. Profile */}
+        <Link
+          to="/profile"
+          title="Profile"
+          aria-label="Profile"
+          className={cn(
+            "p-1.5 text-[#48484A] transition-transform hover:scale-110 hover:text-[#1D1D1F]",
+            pathname.startsWith("/profile") && "text-[#1D1D1F] scale-105",
+          )}
+        >
+          <User className="h-5 w-5" strokeWidth={1.75} />
+        </Link>
       </div>
     </nav>
-  );
-}
-
-function NavItem({
-  to,
-  label,
-  icon: Icon,
-  active,
-}: {
-  to: string;
-  label: string;
-  icon: typeof MapIcon;
-  active: boolean;
-}) {
-  return (
-    <Link
-      to={to}
-      aria-label={label}
-      aria-current={active ? "page" : undefined}
-      className={cn(
-        "flex items-center gap-2 px-3 py-2 text-xs tracking-[0.06em] transition-colors",
-        active ? "text-foreground" : "text-subtle hover:text-foreground",
-      )}
-    >
-      <Icon className="h-4 w-4" strokeWidth={1.5} aria-hidden />
-      <span className="hidden sm:inline">{label}</span>
-    </Link>
   );
 }

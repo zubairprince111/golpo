@@ -3,15 +3,16 @@
 @import "tw-animate-css";
 
 /*
- * A MAP OF US — design system.
- * Light mode only. Monochrome, editorial. No brand color.
+ * A MAP OF US (AMOU) — Authentic Visual System
+ * Light mode, soft pastel memory markers with custom story icons, cream cluster badges, frosted floating controls, and ethereal ambient glows.
  */
 
 @theme inline {
-  --radius-sm: 2px;
-  --radius-md: 3px;
-  --radius-lg: 4px;
-  --radius-xl: 6px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -28,196 +29,198 @@
   --color-muted: var(--surface-2);
   --color-muted-foreground: var(--muted-fg);
   --color-subtle: var(--subtle-fg);
-  --color-accent: var(--surface-2);
-  --color-accent-foreground: var(--foreground);
-  --color-destructive: var(--foreground);
-  --color-destructive-foreground: var(--surface);
   --color-border: var(--border);
   --color-input: var(--border);
   --color-ring: var(--muted-fg);
-  --color-map: var(--map-bg);
-  --color-map-line: var(--map-line);
-  --color-map-line-deep: var(--map-line-deep);
 
   --font-sans:
-    "Geist", ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --font-serif: "Newsreader", "Noto Serif Bengali", Georgia, "Times New Roman", serif;
-
-  --shadow-panel: 0 1px 2px oklch(0.2 0 0 / 4%), 0 18px 48px -24px oklch(0.2 0 0 / 14%);
-  --shadow-float: 0 1px 2px oklch(0.2 0 0 / 5%), 0 8px 24px -14px oklch(0.2 0 0 / 12%);
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Newsreader", "Georgia", "Times New Roman", serif;
 }
 
 :root {
-  --radius: 3px;
-  --background: oklch(0.983 0.003 95); /* #FAFAF8 */
-  --surface: oklch(1 0 0); /* #FFFFFF */
-  --surface-2: oklch(0.965 0.004 95); /* #F5F5F2 */
-  --foreground: oklch(0.205 0 0); /* #171717 */
-  --muted-fg: oklch(0.51 0 0); /* #666666 */
-  --subtle-fg: oklch(0.63 0 0); /* #8A8A8A */
-  --border: oklch(0.916 0.003 95); /* #E5E5E2 */
-  --map-line: oklch(0.877 0.004 95); /* #D9D9D5 */
-  --map-bg: oklch(0.958 0.004 95); /* #F3F3F0 */
-  --map-line-deep: oklch(0.822 0.004 95); /* #C8C8C4 */
+  --background: #F4F4F2;
+  --surface: #FFFFFF;
+  --surface-2: #F2F1EC;
+  --foreground: #1D1D1F;
+  --muted-fg: #6E6E73;
+  --subtle-fg: #8E8E93;
+  --border: #E2E0D8;
 }
 
 @layer base {
   * {
     border-color: var(--color-border);
+    touch-action: manipulation;
   }
 
   html {
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    background-color: var(--color-background);
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
-    font-feature-settings: "ss01", "cv01";
-  }
-
-  :focus-visible {
-    outline: 1px solid var(--color-foreground);
-    outline-offset: 2px;
+    overflow-x: hidden;
   }
 
   ::selection {
-    background: var(--color-foreground);
-    color: var(--color-surface);
+    background: #1D1D1F;
+    color: #FFFFFF;
   }
 }
 
-/* Interface eyebrow / metadata label */
-@utility label-xs {
-  font-size: 0.625rem;
-  line-height: 1;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-subtle);
+/* Frosted floating glass pill */
+.amou-glass-pill {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
 }
 
-@utility rule {
-  border-top: 1px solid var(--color-border);
+.amou-glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.12), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
 }
 
-/* Editorial story typography */
-@utility prose-story {
-  font-family: var(--font-serif);
-  font-size: 1.0625rem;
-  line-height: 1.85;
-  letter-spacing: -0.003em;
-  color: color-mix(in oklab, var(--color-foreground) 88%, transparent);
-
-  & p {
-    margin-bottom: 1.15em;
-  }
-
-  & p:last-child {
-    margin-bottom: 0;
-  }
-
-  &:lang(bn) {
-    line-height: 2;
-  }
-}
-
-@utility bn {
-  font-family: "Noto Serif Bengali", var(--font-serif);
-}
-
-/* Cartographic paper grain, extremely subtle */
-@utility paper {
-  position: relative;
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.5;
-    background-image: radial-gradient(var(--color-map-line) 0.5px, transparent 0.5px);
-    background-size: 22px 22px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    transition-duration: 0.001ms !important;
-  }
-}
-
-/* ---- Leaflet overrides: quiet monochrome cartography ---- */
+/* Leaflet container */
 .leaflet-container {
-  background: var(--color-map);
+  background: #EBEAE5;
   font-family: var(--font-sans);
   outline: none;
 }
 
 .leaflet-tile-pane {
-  filter: grayscale(1) contrast(0.92) brightness(1.03);
+  filter: contrast(0.95) brightness(1.02);
 }
 
 .leaflet-control-attribution {
-  background: transparent !important;
-  color: var(--color-subtle) !important;
-  font-size: 9px !important;
-  letter-spacing: 0.04em;
-  padding: 0 8px 2px 0 !important;
+  display: none !important;
 }
 
-.leaflet-control-attribution a {
-  color: var(--color-subtle) !important;
-}
-
-.leaflet-marker-icon {
-  transition:
-    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 220ms ease;
-}
-
-.amou-dot,
-.amou-cluster {
+/* AMOU Memory Markers (Pastel Dots with Icon Badges) */
+.amou-marker-dot {
   display: grid;
   place-items: center;
   cursor: pointer;
 }
 
-.amou-dot span {
-  width: 7px;
-  height: 7px;
+.amou-marker-dot span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
   border-radius: 999px;
-  background: var(--color-foreground);
-  box-shadow: 0 0 0 4px oklch(0.983 0.003 95 / 55%);
+  transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 180ms ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+  font-size: 10px;
+  line-height: 1;
 }
 
-.amou-dot[data-selected="true"] span {
-  width: 9px;
-  height: 9px;
-  box-shadow:
-    0 0 0 5px oklch(1 0 0 / 70%),
-    0 0 0 6px var(--color-foreground);
+.amou-marker-dot.color-rose span {
+  background-color: #E88B9E;
+  color: #FFFFFF;
 }
 
-.amou-dot[data-private="true"] span {
-  background: var(--color-surface);
-  border: 1.5px solid var(--color-foreground);
+.amou-marker-dot.color-peach span {
+  background-color: #F4A28C;
+  color: #FFFFFF;
 }
 
-.amou-cluster span {
-  min-width: 30px;
-  height: 30px;
-  padding: 0 6px;
-  border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--foreground) 55%, transparent);
-  background: oklch(1 0 0 / 88%);
-  color: var(--color-foreground);
-  font-size: 11px;
-  letter-spacing: 0.04em;
+.amou-marker-dot.color-lavender span {
+  background-color: #A5A6D6;
+  color: #FFFFFF;
+}
+
+.amou-marker-dot.color-indigo span {
+  background-color: #6C78B8;
+  color: #FFFFFF;
+}
+
+.amou-marker-dot:hover span {
+  transform: scale(1.35);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+}
+
+.amou-marker-dot[data-selected="true"] span {
+  transform: scale(1.4);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.95), 0 0 0 5px #1D1D1F;
+}
+
+/* AMOU Cluster Badge */
+.amou-cluster-badge {
   display: grid;
   place-items: center;
+  cursor: pointer;
+}
+
+.amou-cluster-badge span {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background-color: #F7F3E8;
+  border: 1px solid #2B2B28;
+  color: #1D1D1F;
+  font-size: 11px;
+  font-weight: 600;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 160ms ease, background-color 160ms ease;
+}
+
+.amou-cluster-badge:hover span {
+  transform: scale(1.18);
+  background-color: #ECE7D8;
+}
+
+/* AMOU Story Card Balloon on Map */
+.amou-story-balloon {
+  position: relative;
+  background: #FFFFFF;
+  border: 1px solid #D6D4CC;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.15), 0 2px 8px -2px rgba(0, 0, 0, 0.08);
+}
+
+.amou-story-balloon::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #FFFFFF;
+  filter: drop-shadow(0 2px 1px rgba(0, 0, 0, 0.08));
+}
+
+/* Ambient glow orbs animation */
+@keyframes amou-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -25px) scale(1.08); }
+}
+
+@keyframes amou-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-25px, 30px) scale(1.06); }
+}
+
+.animate-amou-glow-1 {
+  animation: amou-drift-1 16s ease-in-out infinite;
+}
+
+.animate-amou-glow-2 {
+  animation: amou-drift-2 20s ease-in-out infinite;
 }

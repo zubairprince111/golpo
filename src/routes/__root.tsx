@@ -10,24 +10,24 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { reportError } from "../lib/error-reporting";
 import { AppStateProvider } from "../lib/store";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[#F6F5F2] px-4 font-sans">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+        <h1 className="font-serif text-6xl font-bold text-[#16223B]">404</h1>
+        <h2 className="mt-3 text-lg font-semibold text-[#1D1D1F]">Place Not Found</h2>
+        <p className="mt-2 text-xs text-[#71717A] leading-relaxed">
+          The coordinates or memory you are seeking does not exist on this map.
         </p>
         <div className="mt-6">
           <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            to="/map"
+            className="inline-flex items-center justify-center rounded-full bg-black px-6 py-2.5 text-xs font-medium text-white shadow-sm hover:bg-gray-800 transition-all"
           >
-            Go home
+            Return to Map
           </Link>
         </div>
       </div>
@@ -39,55 +39,96 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    reportError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-screen items-center justify-center bg-[#F6F5F2] px-4 font-sans">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
+        <h1 className="font-serif text-xl font-bold text-[#16223B]">
+          Something went wrong
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+        <p className="mt-2 text-xs text-[#71717A]">
+          We encountered an issue loading this view. You can reload the application or return to the map.
         </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center justify-center rounded-full bg-black px-5 py-2 text-xs font-medium text-white shadow-sm hover:bg-gray-800 transition-all cursor-pointer"
           >
-            Try again
+            Try Again
           </button>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+          <Link
+            to="/map"
+            className="inline-flex items-center justify-center rounded-full border border-black/15 bg-white px-5 py-2 text-xs font-medium text-[#1D1D1F] shadow-xs hover:bg-gray-50 transition-all"
           >
-            Go home
-          </a>
+            Back to Map
+          </Link>
         </div>
       </div>
     </div>
   );
 }
 
+const JSON_LD_DATA = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Golpo",
+  "alternateName": "Golpo Bangladesh",
+  "applicationCategory": "LifestyleApplication",
+  "genre": "Geographic Storytelling & Memory Archive",
+  "description": "An anonymous geographic storytelling and memory archive anchored across the landscape of Bangladesh.",
+  "inLanguage": ["en", "bn"],
+  "spatialCoverage": {
+    "@type": "Place",
+    "name": "Bangladesh",
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 23.685,
+      "longitude": 90.3563
+    }
+  }
+};
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "A Map of Us" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" },
+      { title: "Golpo — A Map of Memories" },
       {
         name: "description",
         content:
-          "A living map of Bangladesh where memories stay attached to the places that created them.",
+          "Golpo is a living geographic memory archive of Bangladesh. Discover and anchor anonymous human stories, thoughts, and reflections to the exact places where they happened.",
       },
-      { property: "og:site_name", content: "A Map of Us" },
+      {
+        name: "keywords",
+        content:
+          "Golpo, Bangladesh memory map, Dhaka stories, geographic storytelling, anonymous journal Bangladesh, memories of place, Dhaka, Sylhet, Chattogram, Cox's Bazar",
+      },
+      { name: "author", content: "Golpo Archive" },
+      { name: "theme-color", content: "#F6F5F2" },
+      { property: "og:title", content: "Golpo — A Map of Memories" },
+      {
+        property: "og:description",
+        content:
+          "Discover and anchor anonymous memories across Bangladesh on Golpo — where moments stay attached to the places that created them.",
+      },
+      { property: "og:site_name", content: "Golpo" },
       { property: "og:type", content: "website" },
+      { property: "og:locale", content: "en_US" },
+      { property: "og:locale:alternate", content: "bn_BD" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Golpo — A Map of Memories" },
+      {
+        name: "twitter:description",
+        content:
+          "Discover and anchor anonymous memories across Bangladesh on Golpo.",
+      },
+      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -104,7 +145,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "apple-touch-icon", href: "/favicon.svg" },
+      { rel: "manifest", href: "/site.webmanifest" },
+      { rel: "sitemap", href: "/sitemap.xml", type: "application/xml" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(JSON_LD_DATA),
+      },
     ],
   }),
   shellComponent: RootShell,
