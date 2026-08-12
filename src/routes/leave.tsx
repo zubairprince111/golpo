@@ -158,8 +158,8 @@ function LeaveMemoryPage() {
   }
 
   return (
-    <main className="min-h-svh bg-[#F6F5F2] pb-28 select-text">
-      <div className="mx-auto w-full max-w-[32rem] px-4 pt-6 sm:px-6">
+    <main className="min-h-[100dvh] bg-[#F6F5F2] pb-[calc(6.5rem+env(safe-area-inset-bottom))] px-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] select-text">
+      <div className="mx-auto w-full max-w-[32rem] pt-[max(1.5rem,env(safe-area-inset-top))]">
         {/* Navigation Back */}
         <Link
           to="/map"
@@ -479,11 +479,15 @@ function LeaveMemoryPage() {
             <div className="pt-3 flex items-center justify-between border-t border-gray-100">
               <button
                 type="submit"
-                disabled={!place || !content.trim()}
-                className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-2.5 text-xs font-medium text-white shadow-sm hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                disabled={!place || !content.trim() || submitting}
+                className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-2.5 text-xs font-medium text-white shadow-sm hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed active:scale-98 transition-all cursor-pointer"
               >
-                <PenLine className="h-3.5 w-3.5" />
-                <span>Anchor to Map</span>
+                {submitting ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <PenLine className="h-3.5 w-3.5" />
+                )}
+                <span>{submitting ? "Anchoring…" : "Anchor to Map"}</span>
               </button>
 
               <div className="text-right">

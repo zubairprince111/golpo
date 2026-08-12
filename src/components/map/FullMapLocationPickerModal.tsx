@@ -39,7 +39,7 @@ function createPickerPinIcon() {
   return L.divIcon({
     className: "golpo-fullmap-picker-pin",
     html: `
-      <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: grab;">
+      <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: grab; touch-action: none; user-select: none;">
         <div style="
           width: 38px;
           height: 38px;
@@ -81,6 +81,18 @@ function MapController({
 
   useEffect(() => {
     if (onMapReady) onMapReady(map);
+
+    // Multiple invalidateSize passes to guarantee layout calculation on all mobile devices
+    map.invalidateSize();
+    const t1 = setTimeout(() => map.invalidateSize(), 100);
+    const t2 = setTimeout(() => map.invalidateSize(), 350);
+    const t3 = setTimeout(() => map.invalidateSize(), 700);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
   }, [map, onMapReady]);
 
   useEffect(() => {
@@ -246,9 +258,13 @@ export function FullMapLocationPickerModal({
 
   return createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-[1300] flex flex-col bg-[#FAF9F6] select-text">
+      <div className="fixed inset-0 z-[1300] flex flex-col h-[100dvh] w-screen overflow-hidden bg-[#FAF9F6] select-text">
         {/* Top Floating Action Bar */}
-        <header className="absolute top-3 left-3 right-3 sm:top-4 sm:left-6 sm:right-6 z-[1000] flex flex-col sm:flex-row items-center gap-2 sm:gap-3 pointer-events-none">
+        <header
+          onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          className="absolute top-3 left-3 right-3 sm:top-4 sm:left-6 sm:right-6 z-[1000] flex flex-col sm:flex-row items-center gap-2 sm:gap-3 pointer-events-none"
+        >
           {/* Back Button & Search Bar (pointer events active) */}
           <div className="flex w-full items-center gap-2 pointer-events-auto">
             <button
@@ -327,13 +343,14 @@ export function FullMapLocationPickerModal({
         </header>
 
         {/* Full-Screen Interactive Leaflet Map */}
-        <div className="relative h-full w-full flex-1">
+        <div className="relative w-full flex-1 min-h-0">
           <MapContainer
             center={pos}
             zoom={15}
             minZoom={7}
             maxZoom={19}
             zoomControl={false}
+            attributionControl={false}
             className="h-full w-full cursor-crosshair z-0"
           >
             {/* Soft, beautiful carto tiles */}
@@ -363,7 +380,11 @@ export function FullMapLocationPickerModal({
           </MapContainer>
 
           {/* Floating Zoom Controls (+ and -) */}
-          <div className="absolute right-3 sm:right-6 top-20 sm:top-24 z-[900] pointer-events-auto">
+          <div
+            onPointerDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            className="absolute right-3 sm:right-6 top-20 sm:top-24 z-[900] pointer-events-auto"
+          >
             <div className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-md border border-[#E2E0D8]">
               <button
                 type="button"
@@ -393,7 +414,11 @@ export function FullMapLocationPickerModal({
         </div>
 
         {/* Bottom Location Confirmation Card */}
-        <footer className="absolute bottom-4 left-3 right-3 sm:bottom-6 sm:left-auto sm:right-6 sm:w-[380px] z-[1000] rounded-3xl bg-white/95 backdrop-blur-md p-4 sm:p-5 shadow-2xl border border-[#E2E0D8]">
+        <footer
+          onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          className="absolute bottom-4 left-3 right-3 sm:bottom-6 sm:left-auto sm:right-6 sm:w-[380px] z-[1000] rounded-3xl bg-white/95 backdrop-blur-md p-4 sm:p-5 shadow-2xl border border-[#E2E0D8] pointer-events-auto"
+        >
           <div className="flex items-start gap-3">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-[#16223B] text-white shadow-sm mt-0.5">
               <MapPin className="h-4 w-4" />
@@ -429,7 +454,7 @@ export function FullMapLocationPickerModal({
             <button
               type="button"
               onClick={handleSave}
-              className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full bg-black py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-gray-800 transition-all cursor-pointer"
+              className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full bg-black py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-gray-800 active:scale-98 transition-all cursor-pointer"
             >
               <Check className="h-3.5 w-3.5" />
               <span>Confirm Location</span>

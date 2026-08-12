@@ -39,8 +39,8 @@ function ProfilePage() {
   const publicCount = ownMemories.filter((m) => m.visibility === "public").length;
 
   return (
-    <main className="min-h-svh bg-[#F6F5F2] pb-32 select-text text-[#1E1E1E]">
-      <div className="mx-auto w-full max-w-[34rem] px-4 pt-6 sm:px-8">
+    <main className="min-h-[100dvh] bg-[#F6F5F2] pb-[calc(6.5rem+env(safe-area-inset-bottom))] px-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] select-text text-[#1E1E1E]">
+      <div className="mx-auto w-full max-w-[34rem] pt-[max(1.5rem,env(safe-area-inset-top))]">
         {/* Navigation Back */}
         <Link
           to="/map"

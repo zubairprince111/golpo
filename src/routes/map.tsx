@@ -116,7 +116,7 @@ function MapPage() {
   }
 
   return (
-    <main className="relative h-svh w-full overflow-hidden bg-[#EBEAE5]">
+    <main className="relative h-[100dvh] w-screen overflow-hidden bg-[#EBEAE5]">
       {/* Full-bleed Map Canvas with Anchored Popup */}
       <div className="absolute inset-0">
         <ClientOnly fallback={<MapVeil />}>
@@ -141,7 +141,7 @@ function MapPage() {
 
       {/* Emergency Admin Broadcast Banner */}
       {settings.emergency_broadcast ? (
-        <div className="fixed top-14 inset-x-0 z-[650] flex justify-center px-4 pointer-events-none">
+        <div className="fixed top-[max(3.75rem,calc(env(safe-area-inset-top)+2.5rem))] inset-x-0 z-[650] flex justify-center px-4 pointer-events-none">
           <div className="pointer-events-auto rounded-full bg-rose-600 px-4 py-1.5 text-xs font-semibold text-white shadow-lg flex items-center gap-2 max-w-lg truncate">
             <span className="h-2 w-2 rounded-full bg-white animate-ping shrink-0" />
             <span className="truncate">{settings.emergency_broadcast}</span>

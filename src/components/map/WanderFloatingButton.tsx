@@ -17,7 +17,7 @@ export function WanderFloatingButton({
   }
 
   return (
-    <div className="fixed bottom-20 right-4 z-[590] sm:bottom-24 sm:right-6 pointer-events-auto">
+    <div className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom))] right-[max(1rem,env(safe-area-inset-right))] z-[590] sm:bottom-24 sm:right-6 pointer-events-auto">
       <motion.button
         type="button"
         onClick={handleClick}

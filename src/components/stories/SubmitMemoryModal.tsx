@@ -48,6 +48,7 @@ export function SubmitMemoryModal({
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [showFullMapPicker, setShowFullMapPicker] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const results = place ? [] : searchPlaces(query);
@@ -133,24 +134,29 @@ export function SubmitMemoryModal({
       return;
     }
 
-    const memory = await addMemory({
-      content,
-      title: title.trim() || undefined,
-      latitude: place.latitude,
-      longitude: place.longitude,
-      location_name: place.name,
-      visibility,
-      icon: selectedIcon,
-    });
+    setSubmitting(true);
+    try {
+      const memory = await addMemory({
+        content,
+        title: title.trim() || undefined,
+        latitude: place.latitude,
+        longitude: place.longitude,
+        location_name: place.name,
+        visibility,
+        icon: selectedIcon,
+      });
 
-    if (memory) {
-      onSuccess(memory.id, memory.latitude, memory.longitude);
-      onClose();
-      setContent("");
-      setTitle("");
-      setPlace(null);
-      setIsLiveLocation(false);
-      setQuery("");
+      if (memory) {
+        onSuccess(memory.id, memory.latitude, memory.longitude);
+        onClose();
+        setContent("");
+        setTitle("");
+        setPlace(null);
+        setIsLiveLocation(false);
+        setQuery("");
+      }
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -158,14 +164,14 @@ export function SubmitMemoryModal({
 
   return createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6 select-text overflow-y-auto">
+      <div className="fixed inset-0 z-[1100] flex items-center justify-center p-3 sm:p-6 select-text overflow-y-auto">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+          className="fixed inset-0 z-0 bg-black/40 backdrop-blur-sm"
         />
 
         {/* Modal Window */}
@@ -174,7 +180,7 @@ export function SubmitMemoryModal({
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.96, opacity: 0, y: 8 }}
           transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-          className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-3xl bg-white p-6 sm:p-8 shadow-2xl border border-[#E2E0D8]"
+          className="relative z-10 w-full max-w-lg max-h-[90dvh] overflow-y-auto overscroll-contain rounded-3xl bg-white p-5 sm:p-8 shadow-2xl border border-[#E2E0D8]"
         >
           {/* Close Button */}
           <button
@@ -513,11 +519,15 @@ export function SubmitMemoryModal({
             <div className="pt-3 flex items-center justify-between border-t border-gray-100">
               <button
                 type="submit"
-                disabled={!place || !content.trim()}
-                className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-2.5 text-xs font-medium text-white shadow-sm hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+                disabled={!place || !content.trim() || submitting}
+                className="inline-flex items-center gap-2 rounded-full bg-black px-6 py-2.5 text-xs font-medium text-white shadow-sm hover:bg-gray-800 disabled:opacity-40 disabled:cursor-not-allowed active:scale-98 transition-all cursor-pointer"
               >
-                <PenLine className="h-3.5 w-3.5" />
-                <span>Anchor to Map</span>
+                {submitting ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <PenLine className="h-3.5 w-3.5" />
+                )}
+                <span>{submitting ? "Anchoring…" : "Anchor to Map"}</span>
               </button>
 
               <div className="text-right">

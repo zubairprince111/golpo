@@ -47,8 +47,8 @@ function AuthPage() {
   }
 
   return (
-    <main className="min-h-svh bg-[#F6F5F2] pb-24">
-      <div className="mx-auto w-full max-w-[28rem] px-6 pt-8 sm:px-10">
+    <main className="min-h-[100dvh] bg-[#F6F5F2] pb-[calc(4rem+env(safe-area-inset-bottom))] px-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
+      <div className="mx-auto w-full max-w-[28rem] pt-[max(2rem,env(safe-area-inset-top))]">
         <Link
           to="/map"
           className="inline-flex items-center gap-2 text-xs font-medium text-[#71717A] hover:text-[#1D1D1F] transition-colors"

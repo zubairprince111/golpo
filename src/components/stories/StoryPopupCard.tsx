@@ -61,7 +61,7 @@ export function StoryPopupCard({
       <div
         role="dialog"
         aria-label={`Story at ${memory.location_name}`}
-        className="amou-story-balloon relative w-[315px] sm:w-[360px] p-4 sm:p-5 text-[#1E1E1E] select-text shadow-xl"
+        className="amou-story-balloon relative w-[315px] sm:w-[360px] max-w-[calc(100vw-1.5rem)] p-4 sm:p-5 text-[#1E1E1E] select-text shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Controls Row */}

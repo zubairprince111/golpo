@@ -91,7 +91,7 @@ export function ReportStoryModal({
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 10 }}
           transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 w-full max-w-md rounded-3xl bg-white p-6 sm:p-7 shadow-2xl border border-[#E2E0D8] text-[#1D1D1F]"
+          className="relative z-10 w-full max-w-md max-h-[min(90dvh,calc(100vh-2rem))] overflow-y-auto overscroll-contain rounded-3xl bg-white p-5 sm:p-7 shadow-2xl border border-[#E2E0D8] text-[#1D1D1F]"
         >
           {/* Header */}
           <div className="flex items-center justify-between pb-3.5 border-b border-gray-100">

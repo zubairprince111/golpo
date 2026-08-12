@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAppState } from "@/lib/store";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -16,8 +17,16 @@ export const Route = createFileRoute("/")({
 });
 
 function LandingPage() {
+  const { user, hydrated } = useAppState();
   const navigate = useNavigate();
   const [entering, setEntering] = useState(false);
+
+  useEffect(() => {
+    // Auto-forward logged in users directly to the map
+    if (hydrated && user) {
+      void navigate({ to: "/map", replace: true });
+    }
+  }, [hydrated, user, navigate]);
 
   function enterApp() {
     setEntering(true);
@@ -27,7 +36,7 @@ function LandingPage() {
   }
 
   return (
-    <main className="relative flex min-h-svh w-full flex-col justify-between overflow-hidden bg-[#F6F5F2] text-[#1E1E1E] select-none">
+    <main className="relative flex min-h-[100dvh] w-full flex-col justify-between overflow-hidden bg-[#F6F5F2] text-[#1E1E1E] select-none">
       {/* Responsive Background Artwork */}
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden z-0">
         {/* Mobile Background Image (< 768px) */}
@@ -114,7 +123,7 @@ function LandingPage() {
       </div>
 
       {/* Bottom Left Author Credit */}
-      <footer className="relative z-20 p-5 sm:p-6 md:p-8 flex justify-start items-end">
+      <footer className="relative z-20 p-5 sm:p-6 md:p-8 pb-[max(1.25rem,env(safe-area-inset-bottom))] pl-[max(1.25rem,env(safe-area-inset-left))] flex justify-start items-end">
         <p className="font-sans text-[11px] text-gray-500 font-normal tracking-normal">
           Made by{" "}
           <a

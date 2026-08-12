@@ -46,7 +46,7 @@ export function TermsPolicyModal({
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.96, opacity: 0, y: 8 }}
           transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 flex w-full max-w-2xl flex-col max-h-[90vh] rounded-2xl bg-white shadow-2xl border border-gray-200 text-[#1D1D1F] overflow-hidden"
+          className="relative z-10 flex w-full max-w-2xl flex-col max-h-[min(90dvh,calc(100vh-2rem))] rounded-2xl bg-white shadow-2xl border border-gray-200 text-[#1D1D1F] overflow-hidden"
         >
           {/* Header */}
           <div className="px-6 py-5 border-b border-gray-100 bg-[#FAF9F6]">

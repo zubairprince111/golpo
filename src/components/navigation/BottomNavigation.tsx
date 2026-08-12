@@ -12,7 +12,7 @@ export function BottomNavigation({
   return (
     <nav
       aria-label="Primary navigation"
-      className="pointer-events-none fixed inset-x-0 bottom-4 z-[600] flex justify-center pb-[env(safe-area-inset-bottom)]"
+      className="pointer-events-none fixed inset-x-0 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[600] flex justify-center px-4"
     >
       <div className="pointer-events-auto flex items-center gap-6 sm:gap-8 rounded-full amou-glass-pill px-5 py-2 shadow-md">
         {/* 1. Map */}

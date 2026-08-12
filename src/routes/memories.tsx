@@ -69,8 +69,8 @@ function DiaryPage() {
   const privateCount = ownMemories.filter((m) => m.visibility === "private").length;
 
   return (
-    <main className="min-h-svh bg-[#F6F5F2] pb-32 select-text">
-      <div className="mx-auto w-full max-w-[36rem] px-4 pt-6 sm:px-8">
+    <main className="min-h-[100dvh] bg-[#F6F5F2] pb-[calc(6.5rem+env(safe-area-inset-bottom))] px-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] select-text">
+      <div className="mx-auto w-full max-w-[36rem] pt-[max(1.5rem,env(safe-area-inset-top))]">
         {/* Back Link */}
         <Link
           to="/map"

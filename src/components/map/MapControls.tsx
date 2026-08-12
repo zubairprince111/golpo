@@ -37,7 +37,7 @@ export function MapControls({
   return (
     <>
       {/* Top Controls: Left-aligned About Trigger + Right-aligned Search Pill */}
-      <div className="pointer-events-none fixed inset-x-0 top-4 z-[600] flex items-center justify-between px-4 sm:px-6">
+      <div className="pointer-events-none fixed inset-x-0 top-[max(0.75rem,env(safe-area-inset-top))] z-[600] flex items-center justify-between px-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         {/* Left: Aesthetic "About" Badge Pill */}
         <div className="pointer-events-auto">
           <button
@@ -64,7 +64,7 @@ export function MapControls({
             </button>
           </div>
         ) : (
-          <div ref={containerRef} className="pointer-events-auto relative w-72 sm:w-80">
+          <div ref={containerRef} className="pointer-events-auto relative w-[calc(100vw-5rem)] max-w-xs sm:w-80">
             <div className="flex items-center gap-2 rounded-full amou-glass-pill px-3.5 py-2 shadow-lg">
               <Search className="h-4 w-4 text-[#8E8E93] shrink-0" />
               <input
