@@ -129,6 +129,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Discover and anchor anonymous memories across Bangladesh on Golpo.",
       },
       { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
+      { name: "google-site-verification", content: "google3e80b72138396dae" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

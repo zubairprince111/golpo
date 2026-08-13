@@ -47,6 +47,19 @@ function isH3SwallowedErrorBody(body: string): boolean {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      const url = new URL(request.url);
+      const match = url.pathname.match(/^\/(google[a-zA-Z0-9_-]+\.html)$/i);
+      if (match) {
+        const fileName = match[1];
+        return new Response(`google-site-verification: ${fileName}\n`, {
+          status: 200,
+          headers: {
+            "content-type": "text/html; charset=utf-8",
+            "cache-control": "public, max-age=86400",
+          },
+        });
+      }
+
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);
